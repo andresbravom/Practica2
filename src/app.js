@@ -4,19 +4,24 @@ import * as uuid from 'uuid'
 const authorData = [{
   name : "Andrés Bravo",
   email: "yo@correo.com",
-  id: "0f995037-71ce-42f3-a9c6-8e03a07d9e76"
-
+  id: "0f995037-71ce-42f3-a9c6-8e03a07d9e76",
+  
 }];
 
 const recipesData = [{
-  id: "1",
+  id: "f9ce5671-ced5-49f0-9d95-b805107e4307",
   title: "title1",
   description: "descripcion1",
   author: "0f995037-71ce-42f3-a9c6-8e03a07d9e76",
-  date: 123456
+  date: 123456,
+  ingredient: "arroz"
+ 
 }];
 
-const ingredients = [];
+const ingredientsData = [{
+  name: "arroz",
+  recipe: "2cf2c8e2-9c20-4d9e-88d3-0e3854362301"
+}];
 
 const typeDefs = `
   type Author{
@@ -31,24 +36,27 @@ const typeDefs = `
     description: String!
     date: Int!
     author: Author!
+    ingredient: [Ingredients]!
     id: ID!
   }
 
   type Ingredients{
     name: String!
-    shownRecipes: [Recipes]!
+    recipe: Recipes!
+    id: ID!
   }
 
   type Query{
     author(id: ID!): Author
     recipe(id: ID!): Recipes
-    ingredients(id: ID!): Ingredients
+    ingredient(id: ID!): Ingredients
   }
 
   type Mutation{
-    addRecipes(title: String!, description: String!, author: ID!) : Recipes!
+    
     addAuthor(name: String!, email: String!): Author!
-    addIngredients(name: String!): Ingredients!
+    addRecipes(title: String!, description: String!, author: ID!, ingredient: ID!) : Recipes!
+    addIngredients(name: String!, recipe: ID): Ingredients!
 
   }
 `
@@ -67,17 +75,32 @@ const resolvers = {
       return result;
     }
   },
+  Ingredients:{
+    recipe: (parent,args, ctx, info)=>{
+      const recipeID = parent.recipe;
+      const result = recipesData.find(obj => obj.id === recipeID);
+      return result;
+    }
+  },
 
   Query: {
-    author: (parents, args, ctx, info) => {
+    author: (parent, args, ctx, info) => {
       const result = authorData.find(obj => obj.id === args.id);
       return result;
     },
-    recipe: (parents, args, ctx, info) => {
+    recipe: (parent, args, ctx, info) => {
       if(!recipesData.some(obj => obj.id === args.id)){
         throw new Error(`Unknow recipe whith id ${args.id}`);
       }
       const result = recipesData.find(obj => obj.id === args.id);
+      return result;
+    },
+  
+    ingredient: (parent, args, ctx, info) =>{
+      if(!ingredientsData.some(obj => obj.id === args.id)){
+        throw new Error(`Unknow ingredient with id ${args.id} `);
+      }
+      const result = ingredientsData.find(obj => obj.id === args.id);
       return result;
     }
   },
@@ -97,18 +120,30 @@ const resolvers = {
     
     },
     addRecipes: (parent, args, ctx, info) => {
-      const {title, description, author} = args;
+      const {title, description, author,ingredient} = args;
       if(!authorData.some(obj => obj.id === author)){
         throw new Error(`Author ${author} not found`);
       }
       const date = new Date().getDate();
       const id = uuid.v4();
       const recipe = {
-        title, description, author, date, id
+        title, description, author, date, id, ingredient
       };
       recipesData.push(recipe);
       return recipe;
     },
+    addIngredients: (parent, args, ctx, info) =>{
+      const {name,recipe} = args;
+      if(!recipesData.some(obj => obj.id === recipe)){
+        throw new Error(`Recipe ${recipe} not found`);
+      }
+      const id = uuid.v4();
+      const ingredient = {
+        name, recipe, id
+      };
+      ingredientsData.push(ingredient);
+      return ingredient;
+    }
   }
 }
 const server = new GraphQLServer({typeDefs, resolvers});
