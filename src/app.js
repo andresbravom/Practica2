@@ -14,7 +14,7 @@ const recipesData = [{
   description: "descripcion1",
   author: "0f995037-71ce-42f3-a9c6-8e03a07d9e76",
   date: 123456,
-  ingredient: "arroz"
+  
  
 }];
 
@@ -27,7 +27,7 @@ const typeDefs = `
   type Author{
     name: String!
     email: String!
-    recipe: [Recipes]!
+    recipe: [Recipes]
     id: ID!
   }
 
@@ -42,7 +42,7 @@ const typeDefs = `
 
   type Ingredients{
     name: String!
-    recipe: Recipes!
+    recipe: Recipes
     id: ID!
   }
 
@@ -73,6 +73,15 @@ const resolvers = {
       const authorID = parent.author;
       const result = authorData.find(obj => obj.id === authorID);
       return result;
+    },
+    ingredient: (parent, args, ctx, info) =>{
+      const result = parent.ingredient.map(ingredient =>{
+        const ingredientInfo = ingredientsData.find(obj => obj.id === ingredient);
+        return{
+          name: ingredientInfo.name,
+          id: ingredientInfo.id
+        };
+      });
     }
   },
   Ingredients:{
