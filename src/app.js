@@ -13,14 +13,14 @@ const recipesData = [{
   title: "title1",
   description: "descripcion1",
   author: "0f995037-71ce-42f3-a9c6-8e03a07d9e76",
-  date: 123456,
-  
- 
+  ingredient: "2cf2c8e2-9c20-4d9e-88d3-0e3854362301",
+   
 }];
 
 const ingredientsData = [{
-  name: "arroz",
-  recipe: "2cf2c8e2-9c20-4d9e-88d3-0e3854362301"
+  id: "2cf2c8e2-9c20-4d9e-88d3-0e3854362301",
+  name: "tomate",
+  recipe: "f9ce5671-ced5-49f0-9d95-b805107e4307"
 }];
 
 const typeDefs = `
@@ -36,13 +36,13 @@ const typeDefs = `
     description: String!
     date: Int!
     author: Author!
-    ingredient: [Ingredients]!
+    ingredient: Ingredients
     id: ID!
   }
 
   type Ingredients{
     name: String!
-    recipe: Recipes
+    recipe: Recipes!
     id: ID!
   }
 
@@ -73,17 +73,17 @@ const resolvers = {
       const authorID = parent.author;
       const result = authorData.find(obj => obj.id === authorID);
       return result;
+      }
     },
-    ingredient: (parent, args, ctx, info) =>{
-      const result = parent.ingredient.map(ingredient =>{
-        const ingredientInfo = ingredientsData.find(obj => obj.id === ingredient);
-        return{
-          name: ingredientInfo.name,
-          id: ingredientInfo.id
-        };
-      });
-    }
-  },
+    // ingredient: (parent, args, ctx, info) =>{
+      // const result = parent.ingredient.map(ingredient =>{
+      //   const ingredientInfo = ingredientsData.find(obj => obj.id === ingredient);
+      //   return{
+      //     name: ingredientInfo.name,
+      //     id: ingredientInfo.id
+      //   };
+      // });
+  
   Ingredients:{
     recipe: (parent,args, ctx, info)=>{
       const recipeID = parent.recipe;
@@ -129,7 +129,7 @@ const resolvers = {
     
     },
     addRecipes: (parent, args, ctx, info) => {
-      const {title, description, author,ingredient} = args;
+      const {title, description, author, ingredient} = args;
       if(!authorData.some(obj => obj.id === author)){
         throw new Error(`Author ${author} not found`);
       }
