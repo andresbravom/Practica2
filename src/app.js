@@ -25,7 +25,7 @@ const recipesData = [{
    
 },
 {
-  id:"c35b0de5-69b3-44eb-b92e-f66346bcba8f",
+  id: "c35b0de5-69b3-44eb-b92e-f66346bcba8f",
   title: "receta2",
   description: "descripcion2",
   author: "0f995037-71ce-42f3-a9c6-8e03a07d9e76",
@@ -45,17 +45,17 @@ const recipesData = [{
 const ingredientsData = [{
   id: "2cf2c8e2-9c20-4d9e-88d3-0e3854362301",
   name: "tomate",
-  recipe: "f9ce5671-ced5-49f0-9d95-b805107e4307",
+  recipe: ["f9ce5671-ced5-49f0-9d95-b805107e4307", "c35b0de5-69b3-44eb-b92e-f66346bcba8f"],
 },
 {
   id: "9f28c050-0ca6-4ac3-9763-79b3a4a323f2",
   name: "zanahoria",
-  recipe: "f9ce5671-ced5-49f0-9d95-b805107e4307",
+  recipe: ["f9ce5671-ced5-49f0-9d95-b805107e4307", "e97382fd-0283-48e9-b76e-96c97524939d"],
 },
 {
   id: "fb466cc5-973d-44dc-b838-ce2dae423f90",
   name: "lechuga",
-  recipe: "f9ce5671-ced5-49f0-9d95-b805107e4307",
+  recipe: ["f9ce5671-ced5-49f0-9d95-b805107e4307", "c35b0de5-69b3-44eb-b92e-f66346bcba8f"]
 }
 ];
 
@@ -76,7 +76,7 @@ const typeDefs = `
   }
   type Ingredients{
     name: String!
-    recipe: Recipes
+    recipe: [Recipes]!
     id: ID!
   }
   type Query{
@@ -106,14 +106,10 @@ const resolvers = {
       const result = authorData.find(obj => obj.id === authorID);
       return result;
       },
-    // ingredient: (parent, args, ctx, info) => {
-    //   const ingredientID = parent.ingredient;
-    //   const result = ingredientsData.find(obj => obj.id === ingredientID);
-    //   return result;
-    //   }
     
     ingredient: (parent, args, ctx, info) =>{
-      const result = parent.ingredient.map(element =>{ const ingredientInfo = ingredientsData.find(obj => obj.id === element);
+      const result = parent.ingredient.map(element =>{ 
+        const ingredientInfo = ingredientsData.find(obj => obj.id === element);
         return{
           name: ingredientInfo.name,
           id: ingredientInfo.id
@@ -123,9 +119,14 @@ const resolvers = {
       } 
     },
   Ingredients:{
-    recipe: (parent,args, ctx, info)=>{
-      const recipeID = parent.recipe;
-      const result = recipesData.find(obj => obj.id === recipeID);
+    recipe: (parent, args, ctx, info)=>{
+      const result = parent.recipe.map(element =>{
+        const recipeInfo = recipesData.find(obj => obj.id === element);
+        return{
+          title: recipeInfo.title,
+          id: recipeInfo.id
+        };
+      });
       return result;
     }
   },
@@ -141,7 +142,7 @@ const resolvers = {
       }
       const result = recipesData.find(obj => obj.id === args.id);
       return result;
-    },//aqui faltaria hacer lo mismo pero con ingredient 
+    },
   
     ingredient: (parent, args, ctx, info) =>{
       if(!ingredientsData.some(obj => obj.id === args.id)){
@@ -184,7 +185,7 @@ const resolvers = {
       const id = uuid.v4();
       const ingredient = {
         name,
-        id
+        id, 
       };
 
       ingredientsData.push(ingredient);
