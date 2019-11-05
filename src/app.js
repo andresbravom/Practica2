@@ -83,12 +83,19 @@ const typeDefs = `
     author(id: ID!): Author
     recipe(id: ID!): Recipes
     ingredient(id: ID!): Ingredients
+    showRecipes: [Recipes]
+    showAuthors: [Author]
+    showIngredients: [Ingredients]
+    
+    
   }
   type Mutation{
     
     addAuthor(name: String!, email: String!): Author!
-    addRecipes(title: String!, description: String!, author: ID!) : Recipes!
-    addIngredients(name: String!, recipe: [ID]!): Ingredients!
+    addRecipes(title: String!, description: String!, author: ID!, ingredient: [ID]!) : Recipes!
+    addIngredients(name: String!): Ingredients!
+   
+   
   }
 `
 const resolvers = {
@@ -150,6 +157,24 @@ const resolvers = {
       }
       const result = ingredientsData.find(obj => obj.id === args.id);
       return result;
+    },
+    showRecipes: (parent, args, ctx, info) =>{
+      const result = recipesData.map(element =>{
+        return element;
+      });
+      return result;
+    },
+    showAuthors: (parent, args, ctx, info) =>{
+      const result = authorData.map(element =>{
+        return element;
+      });
+      return result;
+    },
+    showIngredients: (parent, arg, ctx, info) =>{
+      const result = ingredientsData.map(element =>{
+        return element;
+      });
+      return result;
     }
   },
   Mutation: {
@@ -168,30 +193,38 @@ const resolvers = {
     
     },
     addRecipes: (parent, args, ctx, info) => {
-      const {title, description, author} = args;
+      const {title, description, author, ingredient} = args;
       if(!authorData.some(obj => obj.id === author)){
         throw new Error(`Author ${author} not found`);
       }
       const date = new Date().getDate();
       const id = uuid.v4();
       const recipe = {
-        title, description, author, date, id
+        title, description, author, date, id, ingredient
       };
       recipesData.push(recipe);
       return recipe;
     },
     addIngredients: (parent, args, ctx, info) => {
-      const { name, recipe} = args;
+      const { name} = args;
       const id = uuid.v4();
       const ingredient = {
         name,
         id, 
-        recipe,
+        
       };
 
       ingredientsData.push(ingredient);
       return ingredient;
-    }
+    },
+    // removeRecipe:(parent, args, ctx, info) =>{
+    //   const {id} = args;
+    //   const data;
+    //   if(recipesData.some(obj => obj.id === id)){
+    //     data = recipesData.splice(recipesData.indexOf(search),1);
+    //   }
+    //   return data;
+    // }
   }
 }
 const server = new GraphQLServer({typeDefs, resolvers});
