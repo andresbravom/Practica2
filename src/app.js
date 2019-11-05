@@ -87,8 +87,8 @@ const typeDefs = `
   type Mutation{
     
     addAuthor(name: String!, email: String!): Author!
-    addRecipes(title: String!, description: String!, author: ID!, ingredient: [ID]!) : Recipes!
-    addIngredients(name: String!): Ingredients!
+    addRecipes(title: String!, description: String!, author: ID!) : Recipes!
+    addIngredients(name: String!, recipe: [ID]!): Ingredients!
   }
 `
 const resolvers = {
@@ -168,24 +168,25 @@ const resolvers = {
     
     },
     addRecipes: (parent, args, ctx, info) => {
-      const {title, description, author, ingredient} = args;
+      const {title, description, author} = args;
       if(!authorData.some(obj => obj.id === author)){
         throw new Error(`Author ${author} not found`);
       }
       const date = new Date().getDate();
       const id = uuid.v4();
       const recipe = {
-        title, description, author, date, id, ingredient
+        title, description, author, date, id
       };
       recipesData.push(recipe);
       return recipe;
     },
     addIngredients: (parent, args, ctx, info) => {
-      const { name } = args;
+      const { name, recipe} = args;
       const id = uuid.v4();
       const ingredient = {
         name,
         id, 
+        recipe,
       };
 
       ingredientsData.push(ingredient);
