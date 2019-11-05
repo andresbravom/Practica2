@@ -1,29 +1,63 @@
 import  {GraphQLServer} from 'graphql-yoga'
 import * as uuid from 'uuid'
 
-
+//Autor
 const authorData = [{
   name : "Andrés Bravo",
   email: "yo@correo.com",
   id: "0f995037-71ce-42f3-a9c6-8e03a07d9e76",
   
-}];
-
+},
+{
+  name: "Laura Rodríguez",
+  email: "ella@.com",
+  id: "abde6470-293e-459f-ac01-e66f8e57d191",
+}
+];
+//Receta
 const recipesData = [{
   id: "f9ce5671-ced5-49f0-9d95-b805107e4307",
-  title: "title1",
+  title: "receta1",
   description: "descripcion1",
   author: "0f995037-71ce-42f3-a9c6-8e03a07d9e76",
-  ingredient: ["2cf2c8e2-9c20-4d9e-88d3-0e3854362301"],
-  date: 4
+  ingredient: ["2cf2c8e2-9c20-4d9e-88d3-0e3854362301", "9f28c050-0ca6-4ac3-9763-79b3a4a323f2"],
+  date: 4,
    
-}];
-
+},
+{
+  id:"c35b0de5-69b3-44eb-b92e-f66346bcba8f",
+  title: "receta2",
+  description: "descripcion2",
+  author: "0f995037-71ce-42f3-a9c6-8e03a07d9e76",
+  ingredient: ["fb466cc5-973d-44dc-b838-ce2dae423f90", "2cf2c8e2-9c20-4d9e-88d3-0e3854362301"],
+  date: 4,
+},
+{
+  id: "e97382fd-0283-48e9-b76e-96c97524939d",
+  title: "receta3",
+  description: "descripcion3",
+  author: "abde6470-293e-459f-ac01-e66f8e57d191",
+  ingredient: ["f9ce5671-ced5-49f0-9d95-b805107e4307", "f9ce5671-ced5-49f0-9d95-b805107e4307"],
+  date: 4,
+}
+];
+//Ingredientes
 const ingredientsData = [{
   id: "2cf2c8e2-9c20-4d9e-88d3-0e3854362301",
   name: "tomate",
   recipe: "f9ce5671-ced5-49f0-9d95-b805107e4307",
-}];
+},
+{
+  id: "9f28c050-0ca6-4ac3-9763-79b3a4a323f2",
+  name: "zanahoria",
+  recipe: "f9ce5671-ced5-49f0-9d95-b805107e4307",
+},
+{
+  id: "fb466cc5-973d-44dc-b838-ce2dae423f90",
+  name: "lechuga",
+  recipe: "f9ce5671-ced5-49f0-9d95-b805107e4307",
+}
+];
 
 const typeDefs = `
   type Author{
@@ -38,12 +72,11 @@ const typeDefs = `
     date: Int!
     author: Author!
     ingredient: [Ingredients]!
-
     id: ID!
   }
   type Ingredients{
     name: String!
-    recipe: Recipes!
+    recipe: Recipes
     id: ID!
   }
   type Query{
@@ -55,7 +88,7 @@ const typeDefs = `
     
     addAuthor(name: String!, email: String!): Author!
     addRecipes(title: String!, description: String!, author: ID!, ingredient: [ID]!) : Recipes!
-    addIngredients(name: String!, recipe: ID): Ingredients!
+    addIngredients(name: String!): Ingredients!
   }
 `
 const resolvers = {
@@ -146,15 +179,14 @@ const resolvers = {
       recipesData.push(recipe);
       return recipe;
     },
-    addIngredients: (parent, args, ctx, info) =>{
-      const {name,recipe} = args;
-      if(!recipesData.some(obj => obj.id === recipe)){
-        throw new Error(`Recipe ${recipe} not found`);
-      }
+    addIngredients: (parent, args, ctx, info) => {
+      const { name } = args;
       const id = uuid.v4();
       const ingredient = {
-        name, recipe, id
+        name,
+        id
       };
+
       ingredientsData.push(ingredient);
       return ingredient;
     }
