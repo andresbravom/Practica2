@@ -37,7 +37,7 @@ const recipesData = [{
   title: "receta3",
   description: "descripcion3",
   author: "abde6470-293e-459f-ac01-e66f8e57d191",
-  ingredient: ["f9ce5671-ced5-49f0-9d95-b805107e4307", "f9ce5671-ced5-49f0-9d95-b805107e4307"],
+  ingredient: ["2cf2c8e2-9c20-4d9e-88d3-0e3854362301", "9f28c050-0ca6-4ac3-9763-79b3a4a323f2"],
   date: 4,
 }
 ];
@@ -94,7 +94,7 @@ const typeDefs = `
     addAuthor(name: String!, email: String!): Author!
     addRecipes(title: String!, description: String!, author: ID!, ingredient: [ID]!) : Recipes!
     addIngredients(name: String!): Ingredients!
-   
+    removeRecipe(id: ID): String!
    
   }
 `
@@ -117,10 +117,7 @@ const resolvers = {
     ingredient: (parent, args, ctx, info) =>{
       const result = parent.ingredient.map(element =>{ 
         const ingredientInfo = ingredientsData.find(obj => obj.id === element);
-        return{
-          name: ingredientInfo.name,
-          id: ingredientInfo.id
-        };
+        return ingredientInfo;
       });
       return result;
       } 
@@ -129,10 +126,7 @@ const resolvers = {
     recipe: (parent, args, ctx, info)=>{
       const result = parent.recipe.map(element =>{
         const recipeInfo = recipesData.find(obj => obj.id === element);
-        return{
-          title: recipeInfo.title,
-          id: recipeInfo.id
-        };
+        return recipeInfo;
       });
       return result;
     }
@@ -183,10 +177,9 @@ const resolvers = {
       if(authorData.some(obj => obj.email === email)){
         throw new Error(`User email ${email} already in use`);
       }
+      const id = uuid.v4();
       const author = {
-        name,
-        email,
-        id: uuid.v4()
+        name, email, id, recipe,
       }
       authorData.push(author);
       return author;
@@ -194,14 +187,24 @@ const resolvers = {
     },
     addRecipes: (parent, args, ctx, info) => {
       const {title, description, author, ingredient} = args;
-      if(!authorData.some(obj => obj.id === author)){
-        throw new Error(`Author ${author} not found`);
+      if(recipesData.some(obj=> obj.title === title)){
+        throw new Error(`Recipe ${recipe} don´t exist`);
       }
+      if(!authorData.some(obj => obj.name === author)){
+        throw new Error(`User ${email} don´t exist`);
+      }
+
       const date = new Date().getDate();
       const id = uuid.v4();
       const recipe = {
         title, description, author, date, id, ingredient
       };
+      const aux = authorsData.find(obj => obj.id === author);
+      aux.recipes.push(id);
+      ingredient.map(element => {
+        const ingredientInfo = ingredientsData.find(obj => obj.id === element);
+        ingredientInfo.recipes.push(id);
+      });
       recipesData.push(recipe);
       return recipe;
     },
@@ -217,14 +220,24 @@ const resolvers = {
       ingredientsData.push(ingredient);
       return ingredient;
     },
-    // removeRecipe:(parent, args, ctx, info) =>{
-    //   const {id} = args;
-    //   const data;
-    //   if(recipesData.some(obj => obj.id === id)){
-    //     data = recipesData.splice(recipesData.indexOf(search),1);
-    //   }
-    //   return data;
-    // }
+    removeRecipe:(parent, args, ctx, info) =>{
+      const {id} = args;
+      const menssage = "Se ha eliminado correctamente";
+      if(recipesData.some(obj => obj.id === id)){
+        const auxRecipe = recipesData.find(obj => obj.id === id);
+        recipesData.splice(recipesData.indexOf(auxRecipe), 1);
+      
+        const auxIngredient = ingredientsData.find(obj => id.obj === obj);
+        ingredientsData.splice(ingredientsData.indexOf(auxIngredient), 1);
+
+      }else{
+        return "Recipe don´t exist"
+      }
+    
+   return menssage;
+     }
+
+   
   }
 }
 const server = new GraphQLServer({typeDefs, resolvers});
