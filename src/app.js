@@ -5,8 +5,7 @@ import * as uuid from 'uuid'
 let authorData = [{
   name : "Andrés Bravo",
   email: "yo@correo.com",
-  id: "0f995037-71ce-42f3-a9c6-8e03a07d9e76",
-  
+  id: "0f995037-71ce-42f3-a9c6-8e03a07d9e76", 
 },
 {
   name: "Laura Rodríguez",
@@ -14,6 +13,7 @@ let authorData = [{
   id: "abde6470-293e-459f-ac01-e66f8e57d191",
 }
 ];
+
 //Receta
 let recipesData = [{
   id: "f9ce5671-ced5-49f0-9d95-b805107e4307",
@@ -21,8 +21,7 @@ let recipesData = [{
   description: "descripcion1",
   author: "0f995037-71ce-42f3-a9c6-8e03a07d9e76",
   ingredient: ["2cf2c8e2-9c20-4d9e-88d3-0e3854362301", "9f28c050-0ca6-4ac3-9763-79b3a4a323f2"],
-  date: 4,
-   
+  date: 4, 
 },
 {
   id: "c35b0de5-69b3-44eb-b92e-f66346bcba8f",
@@ -41,6 +40,7 @@ let recipesData = [{
   date: 4,
 }
 ];
+
 //Ingredientes
 let ingredientsData = [{
   id: "2cf2c8e2-9c20-4d9e-88d3-0e3854362301",
@@ -63,6 +63,7 @@ const typeDefs = `
     recipe: [Recipes]!
     id: ID!
   }
+
   type Recipes{
     title: String!
     description: String!
@@ -71,11 +72,13 @@ const typeDefs = `
     ingredient: [Ingredients]!
     id: ID!
   }
+
   type Ingredients{
     name: String!
     recipe: [Recipes]!
     id: ID!
   }
+
   type Query{
     author(id: ID!): Author
     recipe(id: ID!): Recipes
@@ -84,8 +87,8 @@ const typeDefs = `
     showAuthors: [Author]
     showIngredients: [Ingredients]
   }
+
   type Mutation{
-    
     addAuthor(name: String!, email: String!): Author!
     addRecipes(title: String!, description: String!, author: ID!, ingredient: [ID]!) : Recipes!
     addIngredients(name: String!): Ingredients!
@@ -93,6 +96,7 @@ const typeDefs = `
     removeAuthors(id: ID): String!
     removeIngredients(id: ID): String!
     updateAuthor(id: ID!, name: String, email: String): String!
+    updateRecipe(id: ID!, title: String, description: String, ingredient: [ID]): String!
   }
 `
 const resolvers = {
@@ -117,12 +121,10 @@ const resolvers = {
         return ingredientInfo;
       });
       return result;
-
       } 
     },
   Ingredients:{
     recipe: (parent, args, ctx, info)=>{
-
       const ingredientId = parent.id;
       const result = recipesData.filter(receta => { 
         return receta.ingredient.some( id => {
@@ -139,6 +141,7 @@ const resolvers = {
       const result = authorData.find(obj => obj.id === args.id);
       return result;
     },
+
     recipe: (parent, args, ctx, info) => {
       if(!recipesData.some(obj => obj.id === args.id)){
         throw new Error(`Unknow recipe with id ${args.id}`);
@@ -154,15 +157,18 @@ const resolvers = {
       const result = ingredientsData.find(obj => obj.id === args.id);
       return result;
     },
+
     showRecipes: (parent, args, ctx, info) =>{
       return recipesData;
     },
+
     showAuthors: (parent, args, ctx, info) =>{
       const result = authorData.map(element =>{
         return element;
       });
       return result;
     },
+
     showIngredients: (parent, arg, ctx, info) =>{
       const result = ingredientsData.map(element =>{
         return element;
@@ -170,6 +176,7 @@ const resolvers = {
       return result;
     }
   },
+
   Mutation: {
     addAuthor: (parent, args, ctx, info) => {
       const {name, email} = args;
@@ -178,12 +185,12 @@ const resolvers = {
       }
       const id = uuid.v4();
       const author = {
-        name, email, id, recipe,
+        name, email, id
       }
       authorData.push(author);
       return author;
-    
     },
+
     addRecipes: (parent, args, ctx, info) => {
       const {title, description, author, ingredient} = args;
       if(recipesData.some(obj=> obj.title === title)){
@@ -192,7 +199,6 @@ const resolvers = {
       if(!authorData.some(obj => obj.name === author)){
         throw new Error(`User ${email} don´t exist`);
       }
-
       const date = new Date().getDate();
       const id = uuid.v4();
       const recipe = {
@@ -207,6 +213,7 @@ const resolvers = {
       recipesData.push(recipe);
       return recipe;
     },
+
     addIngredients: (parent, args, ctx, info) => {
       const { name} = args;
       const id = uuid.v4();
@@ -218,6 +225,7 @@ const resolvers = {
       ingredientsData.push(ingredient);
       return ingredient;
     },
+
     removeRecipe:(parent, args, ctx, info) =>{
       const {id} = args;
       const message = "Remove sucessfully";
@@ -229,8 +237,8 @@ const resolvers = {
         return message;
       }
       return "Recipe not exist"
-  
      },
+
     removeAuthors: (parent, args, ctx, info) =>{
       const {id} = args;
       const message = "Remove sucessfully";
@@ -242,6 +250,7 @@ const resolvers = {
       } 
       return "Author not exist"
     },
+
     removeIngredients: (parent, args, ctx, info) =>{
       const {id} = args;
       const message = "Remove sucessfully";
@@ -252,8 +261,8 @@ const resolvers = {
         return message;
       }
       return "Ingredient not exist"
-
     },
+
     updateAuthor: (parent, args, ctx, info) =>{
       const {id, name, email} = args;
       const aux = authorData.find(obj =>obj.id === id);
@@ -266,7 +275,24 @@ const resolvers = {
         }
         return "Updates data"
       }
-      return "Author nos exist";
+      return "Author not exist";
+    },
+    updateRecipe: (parent, args, ctx, info) =>{
+      const {id, title, description, ingredient} = args;
+      const aux = recipesData.find(obj => obj.id === id);
+      if(aux){
+        if(title){
+          aux.title = title;
+        }
+        if(description){
+          aux.description = description;
+        }
+        if(ingredient){
+          aux.ingredient = ingredient;
+        }
+        return "Updates recipe"
+      }
+      return "Author not exist";
     },
   }
 }
