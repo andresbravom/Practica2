@@ -83,8 +83,6 @@ const typeDefs = `
     showRecipes: [Recipes]
     showAuthors: [Author]
     showIngredients: [Ingredients]
-    
- 
   }
   type Mutation{
     
@@ -94,7 +92,7 @@ const typeDefs = `
     removeRecipe(id: ID): String!
     removeAuthors(id: ID): String!
     removeIngredients(id: ID): String!
-   
+    updateAuthor(id: ID!, name: String, email: String): String!
   }
 `
 const resolvers = {
@@ -214,8 +212,7 @@ const resolvers = {
       const id = uuid.v4();
       const ingredient = {
         name,
-        id, 
-        
+        id,  
       };
 
       ingredientsData.push(ingredient);
@@ -230,7 +227,6 @@ const resolvers = {
         const auxIngredient = ingredientsData.find(obj => id.obj === obj);
         ingredientsData.splice(ingredientsData.indexOf(auxIngredient), 1);
         return message;
-        
       }
       return "Recipe not exist"
   
@@ -258,8 +254,21 @@ const resolvers = {
       return "Ingredient not exist"
 
     },
+    updateAuthor: (parent, args, ctx, info) =>{
+      const {id, name, email} = args;
+      const aux = authorData.find(obj =>obj.id === id);
+      if(aux){
+        if(name){
+          aux.name = name;
+        }
+        if(email){
+          aux.email = email;
+        }
+        return "Updates data"
+      }
+      return "Author nos exist";
+    },
   }
 }
 const server = new GraphQLServer({typeDefs, resolvers});
 server.start(() => console.log("Server started"));
-
