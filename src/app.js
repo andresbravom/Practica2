@@ -42,7 +42,7 @@ let recipesData = [{
 }
 ];
 //Ingredientes
-const ingredientsData = [{
+let ingredientsData = [{
   id: "2cf2c8e2-9c20-4d9e-88d3-0e3854362301",
   name: "tomate",
 },
@@ -93,6 +93,7 @@ const typeDefs = `
     addIngredients(name: String!): Ingredients!
     removeRecipe(id: ID): String!
     removeAuthors(id: ID): String!
+    removeIngredients(id: ID): String!
    
   }
 `
@@ -223,29 +224,39 @@ const resolvers = {
     removeRecipe:(parent, args, ctx, info) =>{
       const {id} = args;
       const message = "Remove sucessfully";
-      if(recipesData.some(obj => obj.id === id)){
-        const auxRecipe = recipesData.find(obj => obj.id === id);
+      const auxRecipe = recipesData.find(obj => obj.id === id);
+      if(auxRecipe){
         recipesData.splice(recipesData.indexOf(auxRecipe), 1);
-      
         const auxIngredient = ingredientsData.find(obj => id.obj === obj);
         ingredientsData.splice(ingredientsData.indexOf(auxIngredient), 1);
-
-      }else{
-        return "Recipe not exist"
+        return message;
+        
       }
-    
-   return message;
+      return "Recipe not exist"
+  
      },
     removeAuthors: (parent, args, ctx, info) =>{
       const {id} = args;
       const message = "Remove sucessfully";
-        const auxAuthor = authorData.find(obj => obj.id === id);
-        if(auxAuthor){
-          authorData.splice(authorData.indexOf(auxAuthor), 1);
-          recipesData = recipesData.filter(recipe => recipe.author !== id);
-          return message;
-        } 
-        return "Author not exist"
+      const auxAuthor = authorData.find(obj => obj.id === id);
+      if(auxAuthor){
+        authorData.splice(authorData.indexOf(auxAuthor), 1);
+        recipesData = recipesData.filter(recipe => recipe.author !== id);
+        return message;
+      } 
+      return "Author not exist"
+    },
+    removeIngredients: (parent, args, ctx, info) =>{
+      const {id} = args;
+      const message = "Remove sucessfully";
+      const auxIngredient = ingredientsData.find(obj => obj.id === id);
+      if(auxIngredient){
+        ingredientsData.splice(ingredientsData.indexOf(auxIngredient), 1);
+        recipesData = recipesData.filter(recipe => recipe.ingredient !== id);
+        return message;
+      }
+      return "Ingredient not exist"
+
     },
   }
 }
