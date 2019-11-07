@@ -2,7 +2,7 @@ import  {GraphQLServer} from 'graphql-yoga'
 import * as uuid from 'uuid'
 
 //Autor
-const authorData = [{
+let authorData = [{
   name : "Andrés Bravo",
   email: "yo@correo.com",
   id: "0f995037-71ce-42f3-a9c6-8e03a07d9e76",
@@ -105,8 +105,6 @@ const resolvers = {
     }
   },
 
-
-
   Recipes:{
     author: (parent, args, ctx, info) => {
       const authorID = parent.author;
@@ -127,7 +125,6 @@ const resolvers = {
     recipe: (parent, args, ctx, info)=>{
 
       const ingredientId = parent.id;
-      console.log(`id ${ingredientId}`);
       const result = recipesData.filter(receta => { 
         return receta.ingredient.some( id => {
           return id === ingredientId
@@ -239,32 +236,19 @@ const resolvers = {
     
    return message;
      },
-    // removeAuthors: (parent, args, ctx, info) =>{
-    //   const {id} = args;
-    //   const message = "Remove sucessfully";
-    //   if (authorData.some(obj => id.obj === id)){
-    //     const auxAuthor = authorData.find(obj => obj.id === id);
-    //     authorData.splice(authorData.indexOf(auxAuthor), 1);
-
-          //  recipesData = recipesData.filter(recipe => recipe.author !== author.id)
-
-
-
-
-
-
-    //     for(const i=0; i<recipesData.length; i++){
-    //       if(recipesData[i].id === id){
-    //         const auxRecipe = recipesData[i];
-    //         recipesData.splice(auxRecipe, 1);
-    //       }
-    //     }
-    //   }else{
-    //     return "Athor not exist"
-    //   }
-    //   return message;
-    // },
+    removeAuthors: (parent, args, ctx, info) =>{
+      const {id} = args;
+      const message = "Remove sucessfully";
+        const auxAuthor = authorData.find(obj => obj.id === id);
+        if(auxAuthor){
+          authorData.splice(authorData.indexOf(auxAuthor), 1);
+          recipesData = recipesData.filter(recipe => recipe.author !== id);
+          return message;
+        } 
+        return "Author not exist"
+    },
   }
 }
 const server = new GraphQLServer({typeDefs, resolvers});
 server.start(() => console.log("Server started"));
+
