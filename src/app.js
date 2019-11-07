@@ -36,7 +36,7 @@ let recipesData = [{
   title: "receta3",
   description: "descripcion3",
   author: "abde6470-293e-459f-ac01-e66f8e57d191",
-  ingredient: ["2cf2c8e2-9c20-4d9e-88d3-0e3854362301", "9f28c050-0ca6-4ac3-9763-79b3a4a323f2"],
+  ingredient: ["9f28c050-0ca6-4ac3-9763-79b3a4a323f2", "fb466cc5-973d-44dc-b838-ce2dae423f90"],
   date: 4,
 }
 ];
@@ -63,7 +63,6 @@ const typeDefs = `
     recipe: [Recipes]!
     id: ID!
   }
-
   type Recipes{
     title: String!
     description: String!
@@ -72,13 +71,11 @@ const typeDefs = `
     ingredient: [Ingredients]!
     id: ID!
   }
-
   type Ingredients{
     name: String!
     recipe: [Recipes]!
     id: ID!
   }
-
   type Query{
     author(id: ID!): Author
     recipe(id: ID!): Recipes
@@ -87,7 +84,6 @@ const typeDefs = `
     showAuthors: [Author]
     showIngredients: [Ingredients]
   }
-
   type Mutation{
     addAuthor(name: String!, email: String!): Author!
     addRecipes(title: String!, description: String!, author: ID!, ingredient: [ID]!) : Recipes!
@@ -97,6 +93,7 @@ const typeDefs = `
     removeIngredients(id: ID): String!
     updateAuthor(id: ID!, name: String, email: String): String!
     updateRecipe(id: ID!, title: String, description: String, ingredient: [ID]): String!
+    updateIngredients(id: ID!, name: String!): String!
   }
 `
 const resolvers = {
@@ -236,7 +233,7 @@ const resolvers = {
         ingredientsData.splice(ingredientsData.indexOf(auxIngredient), 1);
         return message;
       }
-      return "Recipe not exist"
+      return "Recipe not exist";
      },
 
     removeAuthors: (parent, args, ctx, info) =>{
@@ -248,7 +245,7 @@ const resolvers = {
         recipesData = recipesData.filter(recipe => recipe.author !== id);
         return message;
       } 
-      return "Author not exist"
+      return "Author not exist";
     },
 
     removeIngredients: (parent, args, ctx, info) =>{
@@ -260,7 +257,7 @@ const resolvers = {
         recipesData = recipesData.filter(recipe => recipe.ingredient !== id);
         return message;
       }
-      return "Ingredient not exist"
+      return "Ingredient not exist";
     },
 
     updateAuthor: (parent, args, ctx, info) =>{
@@ -273,7 +270,7 @@ const resolvers = {
         if(email){
           aux.email = email;
         }
-        return "Updates data"
+        return "Updates data";
       }
       return "Author not exist";
     },
@@ -290,10 +287,21 @@ const resolvers = {
         if(ingredient){
           aux.ingredient = ingredient;
         }
-        return "Updates recipe"
+        return "Updates recipe";
       }
       return "Author not exist";
     },
+    updateIngredients:(parent, args, ctx, info) =>{
+      const {id, name} = args;
+      const aux = ingredientsData.find(obj => obj.id === id);
+      if(aux){
+        if(name){
+          aux.name = name;
+        }
+        return "Update ingredients";
+      }
+      return "Ingredient not exist";
+    }
   }
 }
 const server = new GraphQLServer({typeDefs, resolvers});
