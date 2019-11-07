@@ -15,7 +15,7 @@ const authorData = [{
 }
 ];
 //Receta
-const recipesData = [{
+let recipesData = [{
   id: "f9ce5671-ced5-49f0-9d95-b805107e4307",
   title: "receta1",
   description: "descripcion1",
@@ -45,17 +45,14 @@ const recipesData = [{
 const ingredientsData = [{
   id: "2cf2c8e2-9c20-4d9e-88d3-0e3854362301",
   name: "tomate",
-  recipe: ["f9ce5671-ced5-49f0-9d95-b805107e4307", "c35b0de5-69b3-44eb-b92e-f66346bcba8f"],
 },
 {
   id: "9f28c050-0ca6-4ac3-9763-79b3a4a323f2",
   name: "zanahoria",
-  recipe: ["f9ce5671-ced5-49f0-9d95-b805107e4307", "e97382fd-0283-48e9-b76e-96c97524939d"],
 },
 {
   id: "fb466cc5-973d-44dc-b838-ce2dae423f90",
   name: "lechuga",
-  recipe: ["f9ce5671-ced5-49f0-9d95-b805107e4307", "c35b0de5-69b3-44eb-b92e-f66346bcba8f"]
 }
 ];
 
@@ -87,7 +84,7 @@ const typeDefs = `
     showAuthors: [Author]
     showIngredients: [Ingredients]
     
-    
+ 
   }
   type Mutation{
     
@@ -95,6 +92,7 @@ const typeDefs = `
     addRecipes(title: String!, description: String!, author: ID!, ingredient: [ID]!) : Recipes!
     addIngredients(name: String!): Ingredients!
     removeRecipe(id: ID): String!
+    removeAuthors(id: ID): String!
    
   }
 `
@@ -106,6 +104,8 @@ const resolvers = {
       return result;
     }
   },
+
+
 
   Recipes:{
     author: (parent, args, ctx, info) => {
@@ -120,14 +120,20 @@ const resolvers = {
         return ingredientInfo;
       });
       return result;
+
       } 
     },
   Ingredients:{
     recipe: (parent, args, ctx, info)=>{
-      const result = parent.recipe.map(element =>{
-        const recipeInfo = recipesData.find(obj => obj.id === element);
-        return recipeInfo;
+
+      const ingredientId = parent.id;
+      console.log(`id ${ingredientId}`);
+      const result = recipesData.filter(receta => { 
+        return receta.ingredient.some( id => {
+          return id === ingredientId
+        });
       });
+
       return result;
     }
   },
@@ -153,10 +159,7 @@ const resolvers = {
       return result;
     },
     showRecipes: (parent, args, ctx, info) =>{
-      const result = recipesData.map(element =>{
-        return element;
-      });
-      return result;
+      return recipesData;
     },
     showAuthors: (parent, args, ctx, info) =>{
       const result = authorData.map(element =>{
@@ -222,7 +225,7 @@ const resolvers = {
     },
     removeRecipe:(parent, args, ctx, info) =>{
       const {id} = args;
-      const menssage = "Se ha eliminado correctamente";
+      const message = "Remove sucessfully";
       if(recipesData.some(obj => obj.id === id)){
         const auxRecipe = recipesData.find(obj => obj.id === id);
         recipesData.splice(recipesData.indexOf(auxRecipe), 1);
@@ -231,13 +234,36 @@ const resolvers = {
         ingredientsData.splice(ingredientsData.indexOf(auxIngredient), 1);
 
       }else{
-        return "Recipe don´t exist"
+        return "Recipe not exist"
       }
     
-   return menssage;
-     }
+   return message;
+     },
+    // removeAuthors: (parent, args, ctx, info) =>{
+    //   const {id} = args;
+    //   const message = "Remove sucessfully";
+    //   if (authorData.some(obj => id.obj === id)){
+    //     const auxAuthor = authorData.find(obj => obj.id === id);
+    //     authorData.splice(authorData.indexOf(auxAuthor), 1);
 
-   
+          //  recipesData = recipesData.filter(recipe => recipe.author !== author.id)
+
+
+
+
+
+
+    //     for(const i=0; i<recipesData.length; i++){
+    //       if(recipesData[i].id === id){
+    //         const auxRecipe = recipesData[i];
+    //         recipesData.splice(auxRecipe, 1);
+    //       }
+    //     }
+    //   }else{
+    //     return "Athor not exist"
+    //   }
+    //   return message;
+    // },
   }
 }
 const server = new GraphQLServer({typeDefs, resolvers});
