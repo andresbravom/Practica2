@@ -35,12 +35,10 @@ updateAuthor
 updateRecipe
 updateIngredients
 ```
-
-
 #### Add Author 👩🏽‍🍳
 ```js
     mutation{
-    addAuthor(name: "Andrés", email: "andres@gmail.com")
+        addAuthor(name: "Andrés", email: "andres@gmail.com")
 }
 ```
 #### Add Recipe 📜
@@ -48,18 +46,15 @@ For add recipes is it necesary put the id in the `author:` and `ingredient:` fie
 
 ```js
     mutation{
-  addRecipes(name: "Pizza", description: "How to make a vegetable pizza", author:"0f995037-71ce-42f3-a9c6-8e03a07d9e76", ingredient: ["2cf2c8e2-9c20-4d9e-88d3-0e3854362301", "9f28c050-0ca6-4ac3-9763-79b3a4a323f2","fb466cc5-973d-44dc-b838-ce2dae423f90"]), 
+        addRecipes(name: "Pizza", description: "How to make a vegetable pizza", author: "0f995037-71ce-42f3-a9c6-8e03a07d9e76", ingredient:  ["2cf2c8e2-9c20-4d9e-88d3-0e3854362301", "9f28c050-0ca6-4ac3-9763-79b3a4a323f2","fb466cc5-973d-44dc-b838-ce2dae423f90"]), 
 }
 ```
 #### Add Ingredients 🍅🌽🥕
 ```js
 mutation{
-  addIngredients(name: "tomato"){
+    addIngredients(name: "tomato"){
 }
 ```
-#### OUTPUT
-
-
 ### Queries
 ```js
 showRecipes
@@ -74,6 +69,9 @@ query{
     email
     recipe{
       title
+      ingredient{
+        name
+      }
     }
   }
 }
@@ -83,23 +81,47 @@ query{
 "data": {
     "showAuthors": [
       {
-        "name": "Andrés Bravo",
+        "name": "Andrés",
         "email": "andres@ilovejs.com",
         "recipe": [
           {
-            "title": "Pizza"
+            "title": "Pizza",
+            "ingredient": [
+              {
+                "name": "tomato"
+              },
+              {
+                "name": "pepper"
+              }
+            ]
           },
           {
-            "title": "Burguer"
+            "title": "Burguer",
+            "ingredient": [
+              {
+                "name": "cheese"
+              },
+              {
+                "name": "tomato"
+              }
+            ]
           }
         ]
       },
       {
-        "name": "Laura Rodríguez",
+        "name": "Laura",
         "email": "laura@ilovejs.com",
         "recipe": [
           {
-            "title": "Hot dog"
+            "title": "Hot dog",
+            "ingredient": [
+              {
+                "name": "pepper"
+              },
+              {
+                "name": "cheese"
+              }
+            ]
           }
         ]
       }
@@ -108,12 +130,6 @@ query{
 }
 ```
 
-### Mutations
-```js
-showRecipes
-showAuthors
-showIngredients
-```
 
 
 
