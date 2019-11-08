@@ -1,7 +1,7 @@
 # Recipe book  👨🏽‍🍳
 Recipe book is a Node.js app. The user can add, edit and remove (authors, recipes and ingredients), the query is through graphql.
 ## Install 🛠️
-For use this app is necessary install:
+To use this app it is necessary to install:
 * npm
 ```sh
 npm install
@@ -12,13 +12,13 @@ npm install graphql-yoga
 ```
 GraphQL server will listen on `127.0.0.1:4000`
 ## Clone respository 👇🏽
-For clone or download this repository copy this link:
+To clone or download this repository copy this link:
 ```sh
 https://github.com/andresbravom/Practica2.git
 ```
 
 ## Run ▶️
-Use this command for start de ejecution
+Use this command to start the execution
 ```js
 npm start
 ```
@@ -42,7 +42,7 @@ updateIngredients
 }
 ```
 #### Add Recipe 📜
-For add recipes is it necesary put the id in the `author:` and `ingredient:` fields
+To add recipes is it necesary put the id in the `author:` and `ingredient:` fields
 
 ```js
     mutation{
@@ -55,6 +55,7 @@ mutation{
     addIngredients(name: "tomato"){
 }
 ```
+
 ### Queries
 ```js
 showRecipes
