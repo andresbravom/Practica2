@@ -3,13 +3,13 @@ import * as uuid from 'uuid'
 
 //Autor
 let authorData = [{
-  name : "Andrés Bravo",
-  email: "yo@correo.com",
+  name : "Andrés",
+  email: "andres@ilovejs.com",
   id: "0f995037-71ce-42f3-a9c6-8e03a07d9e76", 
 },
 {
-  name: "Laura Rodríguez",
-  email: "ella@.com",
+  name: "Laura",
+  email: "laura@ilovejs.com",
   id: "abde6470-293e-459f-ac01-e66f8e57d191",
 }
 ];
@@ -17,24 +17,24 @@ let authorData = [{
 //Receta
 let recipesData = [{
   id: "f9ce5671-ced5-49f0-9d95-b805107e4307",
-  title: "receta1",
-  description: "descripcion1",
+  title: "Pizza",
+  description: "How to make a vegetable pizza",
   author: "0f995037-71ce-42f3-a9c6-8e03a07d9e76",
   ingredient: ["2cf2c8e2-9c20-4d9e-88d3-0e3854362301", "9f28c050-0ca6-4ac3-9763-79b3a4a323f2"],
   date: 4, 
 },
 {
   id: "c35b0de5-69b3-44eb-b92e-f66346bcba8f",
-  title: "receta2",
-  description: "descripcion2",
+  title: "Burguer",
+  description: "How to make a burguer",
   author: "0f995037-71ce-42f3-a9c6-8e03a07d9e76",
   ingredient: ["fb466cc5-973d-44dc-b838-ce2dae423f90", "2cf2c8e2-9c20-4d9e-88d3-0e3854362301"],
   date: 4,
 },
 {
   id: "e97382fd-0283-48e9-b76e-96c97524939d",
-  title: "receta3",
-  description: "descripcion3",
+  title: "Hot dog",
+  description: "How to make a hot dog",
   author: "abde6470-293e-459f-ac01-e66f8e57d191",
   ingredient: ["9f28c050-0ca6-4ac3-9763-79b3a4a323f2", "fb466cc5-973d-44dc-b838-ce2dae423f90"],
   date: 4,
@@ -44,15 +44,15 @@ let recipesData = [{
 //Ingredientes
 let ingredientsData = [{
   id: "2cf2c8e2-9c20-4d9e-88d3-0e3854362301",
-  name: "tomate",
+  name: "tomato",
 },
 {
   id: "9f28c050-0ca6-4ac3-9763-79b3a4a323f2",
-  name: "zanahoria",
+  name: "pepper",
 },
 {
   id: "fb466cc5-973d-44dc-b838-ce2dae423f90",
-  name: "lechuga",
+  name: "cheese",
 }
 ];
 
